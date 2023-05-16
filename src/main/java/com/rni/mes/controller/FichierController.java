@@ -30,7 +30,7 @@ import com.rni.mes.models.FichierRni;
 import com.rni.mes.models.Mesure;
 import com.rni.mes.models.Site;
 import com.rni.mes.models.Ville;
-import com.rni.mes.records.LieuMesure;
+import com.rni.mes.records.SiteMesure;
 import com.rni.mes.service.FichierRniService;
 import com.rni.mes.service.MesureService;
 import com.rni.mes.service.SiteService;
@@ -64,7 +64,7 @@ public class FichierController {
 	public ResponseEntity<?> exportExcel(@RequestBody MultipartFile file) throws IOException{
 	
 		if(ExcelRead.checkExcelFormat(file)) {
-			List<LieuMesure> liste = new ArrayList<>();
+			List<SiteMesure> liste = new ArrayList<>();
 			liste = ExcelRead.convertExcelToMap(file.getInputStream());
 			
 			FichierRni fichierRni = new FichierRni();
@@ -73,36 +73,36 @@ public class FichierController {
 			
 			fichierRniService.ajouterFichier(fichierRni);
 			
-			for (LieuMesure lieuMesure : liste) {
+			for (SiteMesure siteMesure : liste) {
 				Site site = new Site();
 				Mesure mesure = new Mesure();
 				Ville ville = new Ville();
 				
 				
 				//===============
-				site.setNomSite(lieuMesure.nomSite());
+				site.setNomSite(siteMesure.nomSite());
 				//===============
-				ville.setVille(lieuMesure.ville());
-				ville.setRegion(lieuMesure.region());
-				ville.setProvince(lieuMesure.province());
+				ville.setVille(siteMesure.ville());
+				ville.setRegion(siteMesure.region());
+				ville.setProvince(siteMesure.province());
 				//==============
-				mesure.setLongitude(lieuMesure.longitude());
-				mesure.setLatitude(lieuMesure.latitude());
-				mesure.setPrioritaire(lieuMesure.prioritaire());
-				mesure.setBandeEtroite(lieuMesure.bandeEtroite());
-				mesure.setDateMesure(lieuMesure.dateMesure());
-				mesure.setMoyenneSpatiale(lieuMesure.moyenneSpatiale());
-				mesure.setCommentaire(lieuMesure.commentaire());
-				mesure.setLargeBande(lieuMesure.largeBande());
+				mesure.setLongitude(siteMesure.longitude());
+				mesure.setLatitude(siteMesure.latitude());
+				mesure.setPrioritaire(siteMesure.prioritaire());
+				mesure.setBandeEtroite(siteMesure.bandeEtroite());
+				mesure.setDateMesure(siteMesure.dateMesure());
+				mesure.setMoyenneSpatiale(siteMesure.moyenneSpatiale());
+				mesure.setCommentaire(siteMesure.commentaire());
+				mesure.setLargeBande(siteMesure.largeBande());
 				//==============
 				
 				
 				
 				//recherche si le nom du site existe deja dans la base de donnee
-				Optional<Site> existeSite = siteService.trouveSite(lieuMesure.nomSite());
+				Optional<Site> existeSite = siteService.trouveSite(siteMesure.nomSite());
 				
 				//recherche si la ville existe deja dans la base de donnee
-				Optional<Ville> existeVille = villeService.trouveVille(lieuMesure.ville());
+				Optional<Ville> existeVille = villeService.trouveVille(siteMesure.ville());
 				
 				if(!existeVille.isPresent()) {
 					villeService.ajouterVille(ville);

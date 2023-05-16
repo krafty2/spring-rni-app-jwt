@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.rni.mes.records.LieuMesure;
+import com.rni.mes.records.SiteMesure;
 import com.rni.mes.service.MesureService;
 import com.rni.mes.service.SiteService;
 
 public class ReadObjectTraitement {
 
-	List<LieuMesure> detailLieu = new ArrayList<>();
+	List<SiteMesure> detailLieu = new ArrayList<>();
 
 	/*
 	 * traitement en fonction de l'identifiant d'un lieu
 	 */
-	public List<LieuMesure> avecId(SiteService siteService, Long id) {
+	public List<SiteMesure> avecId(SiteService siteService, Long id) {
 		List<Object[]> result = siteService.detailsSite(id);
 		
 		detailLieu = read(result, detailLieu);
@@ -28,7 +28,7 @@ public class ReadObjectTraitement {
 	 * traitement en fonction de l'annee, la province, la region et la localite
 	 */
 	
-	public List<LieuMesure> traitementAPRL(
+	public List<SiteMesure> traitementAPRL(
 			Integer annee,String regionC,
 			String provinceC,String localiteC,MesureService mesureService
 			){
@@ -44,13 +44,13 @@ public class ReadObjectTraitement {
 	/*
 	 * recupere pour le moment toute les donnees
 	 */
-	public List<LieuMesure> toutLesLieuMesures(SiteService lieuService){
+	public List<SiteMesure> toutLesLieuMesures(SiteService lieuService){
 		List<Object[]> result = lieuService.lieuEtMesure();
 		detailLieu = read(result, detailLieu);
 		return detailLieu;
 	}
 	
-	List<LieuMesure> read(List<Object[]> object,List<LieuMesure> detailLieu) {
+	List<SiteMesure> read(List<Object[]> object,List<SiteMesure> detailLieu) {
 		
 		object.stream().forEach((record)->{
 			Long idSite = (Long)record[0];
@@ -66,7 +66,7 @@ public class ReadObjectTraitement {
 			String region = (String) record[19];
 			String ville = (String) record[20];
 			
-			LieuMesure _detaillieu =  new LieuMesure(idSite, nomSite,
+			SiteMesure _detaillieu =  new SiteMesure(idSite, nomSite,
 					idVille, region,province, ville,
 					idMesure, longitude, latitude,null,
 					dateMesure, moyenneSpatiale, null, null, null, nomRapport);

@@ -39,8 +39,11 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.rni.mes.enums.AccountStatus;
 import com.rni.mes.models.AppUser;
+import com.rni.mes.models.Utilisateur;
 import com.rni.mes.service.AccountService;
+import com.rni.mes.service.UtilisateurService;
 
 @Configuration @EnableWebSecurity @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
@@ -64,14 +67,15 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(){
         return new UserDetailsService() {
             @Autowired
-            private AccountService accountService;
+            private UtilisateurService utilisateurService;
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                AppUser appUser=accountService.findByUsername(username);
-                if (appUser==null) throw new UsernameNotFoundException("User not found");
+                Utilisateur utilisateur =utilisateurService.parUsername(username).get();
+                
+                if(!utilisateur.getStatus().equals(AccountStatus.ACTIVATED)) throw  new RuntimeException("This account is not activated ");
                 //Collection<GrantedAuthority> authorities= List.of(new SimpleGrantedAuthority("USER"));
-                Collection<GrantedAuthority> authorities=appUser.getRoles().stream().map(r->new SimpleGrantedAuthority(r.getRoleName())).collect(Collectors.toList());
-                return new User(username,appUser.getPassword(),authorities);
+                Collection<GrantedAuthority> authorities=utilisateur.getRoles().stream().map(r->new SimpleGrantedAuthority(r.getRoleName())).collect(Collectors.toList());
+                return new User(username,utilisateur.getPassword(),authorities);
             }
         };
     }
@@ -85,8 +89,8 @@ public class SecurityConfig {
         http.csrf(csrf->csrf.disable())
         		.cors(Customizer.withDefaults())
                 .headers().frameOptions().disable().and()
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**","/fichier/**","/pub/**").permitAll() )
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated() )
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth-service/**","/fichier/**","/pub/**","/public/**")
+                		.permitAll().anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 //.httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

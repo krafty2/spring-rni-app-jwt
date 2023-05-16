@@ -13,7 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.rni.mes.records.LieuMesure;
+import com.rni.mes.records.SiteMesure;
 
 public class ExcelRead {
 
@@ -32,8 +32,8 @@ public class ExcelRead {
 
     }
     
-    public static List<LieuMesure> convertExcelToMap(InputStream is){
-    	List<LieuMesure> liste = new ArrayList<>();
+    public static List<SiteMesure> convertExcelToMap(InputStream is){
+    	List<SiteMesure> liste = new ArrayList<>();
     	try {
     		XSSFWorkbook workbook = new XSSFWorkbook(is);
 
@@ -125,11 +125,11 @@ public class ExcelRead {
                 	cid++;
                 }
 	            @SuppressWarnings("null")
-				LieuMesure lieuMesure = new LieuMesure(null, nomSite, null, region,
+				SiteMesure siteMesure = new SiteMesure(null, nomSite, null, region,
 					            		   province, ville, null, longitude, latitude,
 					            		   prioritaire, dateMesure, moyenneSpatiale, largeBande, bandeEtroite,
 					            		   commentaire, null);
-	            liste.add(lieuMesure);
+	            liste.add(siteMesure);
             }
             workbook.close();
 		} catch (Exception e) {
