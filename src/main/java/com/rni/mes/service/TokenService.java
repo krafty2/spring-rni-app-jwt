@@ -15,7 +15,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import com.rni.mes.config.JwtTokenParam;
-import com.rni.mes.models.AppUser;
+
 import com.rni.mes.models.Utilisateur;
 
 @Service

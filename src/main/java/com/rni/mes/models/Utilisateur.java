@@ -31,8 +31,7 @@ public class Utilisateur {
 	private String nom;
 	private String prenom;
 	private String password;
-	@Enumerated(EnumType.STRING)
-	private Genre genre;
+	private String genre;
 	private String email;
 	private boolean emailVerifie;
 	@Enumerated(EnumType.STRING)

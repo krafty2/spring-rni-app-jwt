@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +29,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -40,9 +42,9 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.rni.mes.enums.AccountStatus;
-import com.rni.mes.models.AppUser;
+
 import com.rni.mes.models.Utilisateur;
-import com.rni.mes.service.AccountService;
+
 import com.rni.mes.service.UtilisateurService;
 
 @Configuration @EnableWebSecurity @EnableMethodSecurity(prePostEnabled = true)
@@ -89,7 +91,7 @@ public class SecurityConfig {
         http.csrf(csrf->csrf.disable())
         		.cors(Customizer.withDefaults())
                 .headers().frameOptions().disable().and()
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth-service/**","/fichier/**","/pub/**","/public/**")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/fichier/**","/pub/**","/public/**")
                 		.permitAll().anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 //.httpBasic(Customizer.withDefaults())

@@ -26,20 +26,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rni.mes.enums.AccountStatus;
-import com.rni.mes.models.AppUser;
+
 import com.rni.mes.models.Role;
 import com.rni.mes.models.Utilisateur;
-import com.rni.mes.records.UtilisateurRequestDTO;
+import com.rni.mes.records.RegistrationRequestDTO;
 import com.rni.mes.service.MailService;
 import com.rni.mes.service.RoleService;
 import com.rni.mes.service.TokenService;
 import com.rni.mes.service.UtilisateurService;
-import com.rni.mes.treatment.EmailTreatment;
 
 @RestController
 @RequestMapping("/public")
 @CrossOrigin(origins = "*")
-public class UtilisateurTestController {
+public class UtilisateurController {
 	@Autowired
 	UtilisateurService utilisateurService;
 	@Autowired
@@ -66,6 +65,7 @@ public class UtilisateurTestController {
             @RequestParam boolean withRefreshToken,
             String refreshToken
     		){
+		System.out.println("hello " +  withRefreshToken);
 		//----------------------------------------------
 		if(grantType==null)
 			return new ResponseEntity<>(Map.of("errorMessage", "grantType is required"), HttpStatus.UNAUTHORIZED);
@@ -95,43 +95,35 @@ public class UtilisateurTestController {
     }
 	
 
-	@GetMapping("/test")
-	public Utilisateur creationCompte(@RequestBody UtilisateurRequestDTO  utilisateurRequestDTO){
+	@PostMapping("/register")
+	public Utilisateur creationCompte(@RequestBody RegistrationRequestDTO  registrationRequestDTO){
 		System.out.println("hello");
-		
-		if(!utilisateurRequestDTO.password().equals(utilisateurRequestDTO.confirmPassword()))
+		if(!registrationRequestDTO.password().equals(registrationRequestDTO.confirmPassword()))
             throw new RuntimeException("Passwords not match");
 		
-		System.out.println(utilisateurRequestDTO.password());
+		System.out.println(registrationRequestDTO.password());
 		Utilisateur utilisateur = new Utilisateur();
 		
-		if(roleService.trouveParRole(utilisateurRequestDTO.roleName()).isPresent()) {
-			Role roleExist = roleService.trouveParRole(utilisateurRequestDTO.roleName()).get();
+		if(roleService.trouveParRole(registrationRequestDTO.roleName()).isPresent()) {
+			Role roleExist = roleService.trouveParRole(registrationRequestDTO.roleName()).get();
 		
 			utilisateur.getRoles().add(roleExist);
 		} else {
 			Role role = Role.builder()
-						.roleName(utilisateurRequestDTO.roleName())
+						.roleName(registrationRequestDTO.roleName())
 						.build();
 			roleService.creerRole(role);
-			
-			
-//			utilisateur = Utilisateur.builder()
-//					.username(utilisateurRequestDTO.username())
-//					.nom(utilisateurRequestDTO.nom())
-//					.prenom(utilisateurRequestDTO.prenom())
-//					.email(utilisateurRequestDTO.email())
-//					.build();
 			
 			utilisateur.getRoles().add(role);
 			
 		}
 		
-		utilisateur.setUsername(utilisateurRequestDTO.username());
-		utilisateur.setNom(utilisateurRequestDTO.nom());
-		utilisateur.setPrenom(utilisateurRequestDTO.prenom());
-		utilisateur.setEmail(utilisateurRequestDTO.email());
-		utilisateur.setPassword(passwordEncoder.encode(utilisateurRequestDTO.password()));
+		utilisateur.setUsername(registrationRequestDTO.username());
+		utilisateur.setNom(registrationRequestDTO.nom());
+		utilisateur.setPrenom(registrationRequestDTO.prenom());
+		utilisateur.setEmail(registrationRequestDTO.email());
+		utilisateur.setGenre(registrationRequestDTO.genre());
+		utilisateur.setPassword(passwordEncoder.encode(registrationRequestDTO.password()));
 		
 		utilisateurService.creerUtilisateur(utilisateur);
 		
@@ -155,6 +147,7 @@ public class UtilisateurTestController {
 		
 		try {
             Jwt decode = jwtDecoder.decode(token);
+            
             String subject = decode.getSubject();
             Utilisateur utilisateur=utilisateurService.parUsername(subject).get();
             utilisateur.setEmailVerifie(true);
@@ -167,9 +160,9 @@ public class UtilisateurTestController {
         }
 	}
 	
-	@GetMapping("/rechercheU")
-	public Utilisateur rechercheU() {
-		return utilisateurService.parUsername("krafty").get();
+	@GetMapping("/existeU")
+	public boolean existeUtillisateur(String username) {
+		return utilisateurService.parUsername(username).isPresent();
 	}
 	
 	@GetMapping("/rechercheR")

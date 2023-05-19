@@ -14,9 +14,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.rni.mes.config.RsaKeyProperties;
-import com.rni.mes.models.AppRole;
-import com.rni.mes.models.AppUser;
-import com.rni.mes.service.AccountService;
+import com.rni.mes.enums.AccountStatus;
+import com.rni.mes.models.Role;
+import com.rni.mes.models.Utilisateur;
+import com.rni.mes.service.RoleService;
+import com.rni.mes.service.UtilisateurService;
 
 @SpringBootApplication
 @EnableConfigurationProperties(RsaKeyProperties.class)
@@ -40,35 +42,29 @@ public class RniMapAppApplication {
     }
     
     @Bean
-    CommandLineRunner start(AccountService accountService, PasswordEncoder passwordEncoder){
+    CommandLineRunner start(
+    		UtilisateurService utilisateurService,
+    		RoleService roleService,
+    		PasswordEncoder passwordEncoder
+    		){
         return args -> {
-        	AppRole userRole = new AppRole();
-        	userRole.setRoleName("USER");
-        	accountService.newRole(userRole);
-        	AppRole adminRole = new AppRole();
-        	adminRole.setRoleName("ADMIN");
-        	accountService.newRole(adminRole);
         	
-        	String userR = "USER";
-        	String adminR = "ADMIN";
+        	Role role = new Role();
+        	role.setRoleName("ADMIN");
+        
+        	roleService.creerRole(role);
         	
-        	AppRole findUserRole = accountService.findByRoleName(userR);
-        	AppRole findAdminRole = accountService.findByRoleName(adminR);
+        	Utilisateur utilisateur = new Utilisateur();
+        	utilisateur.setUsername("admin");
+        	utilisateur.setNom("administrateur");
+        	utilisateur.setPrenom("admininatreur");
+        	utilisateur.setPassword(passwordEncoder.encode("1234"));
+        	utilisateur.setEmail("irt.app@irt.com");
+        	utilisateur.setStatus(AccountStatus.ACTIVATED);
+        	utilisateur.setEmailVerifie(true);
+        	utilisateur.getRoles().add(role);
         	
-        	AppUser user1 = new AppUser();
-        	user1.setUsername("user1");
-        	user1.setPassword(passwordEncoder.encode("1234"));
-        	
-        	user1.getRoles().add(findUserRole);
-        	accountService.newUser(user1);
-        	
-        	
-        	AppUser admin1 = new AppUser();
-        	admin1.setUsername("admin");
-        	admin1.setPassword(passwordEncoder.encode("1015"));
-        	
-        	admin1.getRoles().add(findAdminRole);
-        	accountService.newUser(admin1);
+        	utilisateurService.creerUtilisateur(utilisateur);
         };
     }
 
