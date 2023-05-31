@@ -34,7 +34,6 @@ public class RniController {
 	/*
 	 * affiche les informations en fonction de l'annee, la region, la province, la localite
 	 */
-	@CrossOrigin("*")
 	@GetMapping("/searchByRPLA/{annee}/{region}/{province}/{localite}")
 	public List<SiteMesure> rechercheAvance2(
 			@PathVariable Integer annee, @PathVariable String region,
@@ -45,10 +44,15 @@ public class RniController {
 		return detailLieu;
 	}
 	
+	@GetMapping("/recherche")
+	public String test() {
+		
+		return "hello";
+	}
+	
 	/*
 	 * afficher tout les lieux enregistrer
 	 */
-	@CrossOrigin(origins = "*")
 	@GetMapping("/lieux")
 	public List<SiteMesure> toutLesLieux(){
 		List<SiteMesure> liste = new ArrayList<>();

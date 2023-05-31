@@ -25,4 +25,9 @@ public class VilleService {
 	public Ville ajouterVille(Ville ville) {
 		return villeRepository.save(ville);
 	}
+	
+	//toute les villes
+	public Iterable<Ville> touteLesVilles(){
+		return villeRepository.findAll();
+	}
 }

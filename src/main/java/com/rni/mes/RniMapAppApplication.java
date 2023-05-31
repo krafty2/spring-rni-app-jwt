@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -65,6 +67,7 @@ public class RniMapAppApplication {
         	utilisateur.getRoles().add(role);
         	
         	utilisateurService.creerUtilisateur(utilisateur);
+        
         };
     }
 

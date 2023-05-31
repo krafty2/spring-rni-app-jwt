@@ -35,8 +35,21 @@ import com.rni.mes.service.FichierRniService;
 import com.rni.mes.service.MesureService;
 import com.rni.mes.service.SiteService;
 import com.rni.mes.service.VilleService;
+import com.rni.mes.treatment.CoordonneesVille;
 import com.rni.mes.treatment.ExcelRead;
 import com.rni.mes.treatment.ReadObjectTraitement;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/fichier/")
@@ -59,7 +72,6 @@ public class FichierController {
 	}
 	
 	//enregistre les donnees extraites d'un fichier excel
-	
 	@PostMapping("/import/excel")
 	public ResponseEntity<?> exportExcel(@RequestBody MultipartFile file) throws IOException{
 	
@@ -105,8 +117,23 @@ public class FichierController {
 				Optional<Ville> existeVille = villeService.trouveVille(siteMesure.ville());
 				
 				if(!existeVille.isPresent()) {
+					
+					CoordonneesVille coordonneesVille = new CoordonneesVille();
+					
+					Map<String, Double> map = coordonneesVille.map();
+					
+					try {
+						ville.setLatitudeV(map.get(ville.getVille()+"-Lat"));
+						ville.setLongitudeV(map.get(ville.getVille()+"-Lgn"));
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+					
+					
 					villeService.ajouterVille(ville);
+					
 					site.setVille(ville);
+					
 					siteService.ajouterLieu(site);
 					
 					mesure.setFichierRni(fichierRni);

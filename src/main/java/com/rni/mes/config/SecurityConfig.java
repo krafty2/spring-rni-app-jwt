@@ -91,7 +91,9 @@ public class SecurityConfig {
         http.csrf(csrf->csrf.disable())
         		.cors(Customizer.withDefaults())
                 .headers().frameOptions().disable().and()
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/fichier/**","/pub/**","/public/**")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/fichier/**","/pub/**",
+                		"/public/**","/rni/**","/swagger-ui/**"
+                		,"/v3/**","/swagger-ui.html")
                 		.permitAll().anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 //.httpBasic(Customizer.withDefaults())
