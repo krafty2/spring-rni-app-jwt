@@ -29,12 +29,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.rni.mes.models.FichierRni;
 import com.rni.mes.models.Mesure;
 import com.rni.mes.models.Site;
-import com.rni.mes.models.Ville;
-import com.rni.mes.records.SiteMesure;
+import com.rni.mes.models.Localisation;
+import com.rni.mes.records.ReqDetailMesure;
 import com.rni.mes.service.FichierRniService;
 import com.rni.mes.service.MesureService;
 import com.rni.mes.service.SiteService;
-import com.rni.mes.service.VilleService;
+import com.rni.mes.service.LocalisationService;
 import com.rni.mes.treatment.CoordonneesVille;
 import com.rni.mes.treatment.ExcelRead;
 import com.rni.mes.treatment.ReadObjectTraitement;
@@ -58,16 +58,16 @@ public class FichierController {
 
 	private SiteService siteService;
 	private MesureService mesureService;
-	private VilleService villeService;
+	private LocalisationService localisationService;
 	private FichierRniService fichierRniService;
 	
 	//Constructor
 	public FichierController(SiteService siteService, MesureService mesureService,
-								VilleService villeService, FichierRniService fichierRniService) {
+								LocalisationService villeService, FichierRniService fichierRniService) {
 		super();
 		this.siteService = siteService;
 		this.mesureService = mesureService;
-		this.villeService = villeService;
+		this.localisationService = villeService;
 		this.fichierRniService = fichierRniService;
 	}
 	
@@ -76,7 +76,7 @@ public class FichierController {
 	public ResponseEntity<?> exportExcel(@RequestBody MultipartFile file) throws IOException{
 	
 		if(ExcelRead.checkExcelFormat(file)) {
-			List<SiteMesure> liste = new ArrayList<>();
+			List<ReqDetailMesure> liste = new ArrayList<>();
 			liste = ExcelRead.convertExcelToMap(file.getInputStream());
 			
 			FichierRni fichierRni = new FichierRni();
@@ -85,18 +85,18 @@ public class FichierController {
 			
 			fichierRniService.ajouterFichier(fichierRni);
 			
-			for (SiteMesure siteMesure : liste) {
+			for (ReqDetailMesure siteMesure : liste) {
 				Site site = new Site();
 				Mesure mesure = new Mesure();
-				Ville ville = new Ville();
+				Localisation localisation = new Localisation();
 				
 				
 				//===============
 				site.setNomSite(siteMesure.nomSite());
 				//===============
-				ville.setVille(siteMesure.ville());
-				ville.setRegion(siteMesure.region());
-				ville.setProvince(siteMesure.province());
+				localisation.setLocalite(siteMesure.localite());
+				localisation.setRegion(siteMesure.region());
+				localisation.setProvince(siteMesure.province());
 				//==============
 				mesure.setLongitude(siteMesure.longitude());
 				mesure.setLatitude(siteMesure.latitude());
@@ -111,37 +111,38 @@ public class FichierController {
 				
 				
 				//recherche si le nom du site existe deja dans la base de donnee
-				Optional<Site> existeSite = siteService.trouveSite(siteMesure.nomSite());
+				Optional<Site> existeSite = siteService.trouveSite(site.getNomSite());
 				
 				//recherche si la ville existe deja dans la base de donnee
-				Optional<Ville> existeVille = villeService.trouveVille(siteMesure.ville());
+				Optional<Localisation> existeLocalite = localisationService.trouveLocalite(localisation.getLocalite());
 				
-				if(!existeVille.isPresent()) {
+				if(!existeLocalite.isPresent()) {
 					
 					CoordonneesVille coordonneesVille = new CoordonneesVille();
 					
 					Map<String, Double> map = coordonneesVille.map();
 					
 					try {
-						ville.setLatitudeV(map.get(ville.getVille()+"-Lat"));
-						ville.setLongitudeV(map.get(ville.getVille()+"-Lgn"));
+						localisation.setLatitudeV(map.get(localisation.getLocalite()+"-Lat"));
+						localisation.setLongitudeV(map.get(localisation.getLocalite()+"-Lgn"));
 					} catch (Exception e) {
 						// TODO: handle exception
+						e.getMessage();
 					}
 					
 					
-					villeService.ajouterVille(ville);
+					localisationService.ajouterLocalite(localisation);
 					
-					site.setVille(ville);
+					site.setLocalisation(localisation);
 					
 					siteService.ajouterLieu(site);
 					
 					mesure.setFichierRni(fichierRni);
 					mesure.setSite(site);
 					mesureService.ajoutMesure(mesure);
-				} else if (existeVille.isPresent() && !existeSite.isPresent()) {
-					Ville villePresent = existeVille.get();
-					site.setVille(villePresent);
+				} else if (existeLocalite.isPresent() && !existeSite.isPresent()) {
+					Localisation localitePresent = existeLocalite.get();
+					site.setLocalisation(localitePresent);
 					siteService.ajouterLieu(site);
 					mesure.setFichierRni(fichierRni);
 					mesure.setSite(site);

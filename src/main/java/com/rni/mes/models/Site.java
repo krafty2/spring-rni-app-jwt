@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 public class Site {
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
-	private Long idSite;
+	private Long id;
 	@Column(unique = true)
 	private String nomSite;
 	@ManyToOne(cascade = {CascadeType.ALL})
-	private Ville ville;
+	private Localisation localisation;
 }

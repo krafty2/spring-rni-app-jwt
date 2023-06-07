@@ -1,33 +1,54 @@
 package com.rni.mes.service;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.rni.mes.models.Ville;
-import com.rni.mes.repository.VilleRepository;
+import com.rni.mes.models.Localisation;
+import com.rni.mes.repository.LocalisationRepository;
 
 @Service
-public class VilleService {
+public class LocalisationService {
 
-	VilleRepository villeRepository;
-	
-	public VilleService(VilleRepository villeRepository) {
-		super();
-		this.villeRepository = villeRepository;
-	}
+	@Autowired
+	LocalisationRepository localisationRepository;
 
 	//recherche par ville
-	public Optional<Ville> trouveVille(String ville){
-		return villeRepository.findByVille(ville);
+	public Optional<Localisation> trouveLocalite(String localite){
+		return localisationRepository.findByLocalite(localite);
 	}
 	
-	public Ville ajouterVille(Ville ville) {
-		return villeRepository.save(ville);
+	public Localisation ajouterLocalite(Localisation localisation) {
+		return localisationRepository.save(localisation);
 	}
 	
 	//toute les villes
-	public Iterable<Ville> touteLesVilles(){
-		return villeRepository.findAll();
+	public Iterable<Localisation> touteLesLocalites(){
+		Sort sort = Sort.by("localite").ascending();
+		return localisationRepository.findAll(sort);
+	}
+	
+	/*
+	 * toute les regions
+	 */
+	public List<String> lesRegions(){
+		return localisationRepository.lesRegions();
+	}
+	
+	/*
+	 * toute les provinces par region
+	 */
+	public List<String> provinceParReg(String region){
+		return localisationRepository.provinceParReg(region);
+	}
+	
+	/*
+	 * toute les localite par province
+	 */
+	public List<String> localiteParPro(String province){
+		return localisationRepository.localiteParPro(province);
 	}
 }

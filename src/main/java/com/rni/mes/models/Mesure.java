@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class Mesure {
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
-	private Long idMesure;
+	private Long id;
 	private Double longitude;
 	private Double latitude;
 	private String prioritaire;

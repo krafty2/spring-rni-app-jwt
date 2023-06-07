@@ -8,15 +8,17 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+/*
+ * changer la ville par Localite
+ */
 @Entity @Data @AllArgsConstructor @NoArgsConstructor
-public class Ville {
+public class Localisation {
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
-	private Long idVille;
+	private Long id;
 	//ville correspond a la localite dans le fichier excel
 	@Column(unique = true)
-	private String ville;
+	private String localite;
 	private String region;
 	private String province;
 	private Double longitudeV;

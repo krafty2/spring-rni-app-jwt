@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.rni.mes.records.SiteMesure;
+import com.rni.mes.records.ReqDetailMesure;
 import com.rni.mes.service.MesureService;
 import com.rni.mes.service.SiteService;
 
 public class ReadObjectTraitement {
 
-	List<SiteMesure> detailLieu = new ArrayList<>();
+	List<ReqDetailMesure> detailLieu = new ArrayList<>();
 
 	/*
 	 * traitement en fonction de l'identifiant d'un lieu
 	 */
-	public List<SiteMesure> avecId(SiteService siteService, Long id) {
+	public List<ReqDetailMesure> avecId(SiteService siteService, Long id) {
 		List<Object[]> result = siteService.detailsSite(id);
 		
 		detailLieu = read(result, detailLieu);
@@ -28,7 +28,7 @@ public class ReadObjectTraitement {
 	 * traitement en fonction de l'annee, la province, la region et la localite
 	 */
 	
-	public List<SiteMesure> traitementAPRL(
+	public List<ReqDetailMesure> traitementParARPL(
 			Integer annee,String regionC,
 			String provinceC,String localiteC,MesureService mesureService
 			){
@@ -39,18 +39,30 @@ public class ReadObjectTraitement {
 		return detailLieu;
 		
 	}
-
+	
+	/*
+	 * traitement des donnees de mesure en fonction de l'annee
+	 */
+	public List<ReqDetailMesure> traitementParAnnee(
+			Integer annee,MesureService mesureService
+			){
+		List<Object[]> result = mesureService.rechercheParAnnee(annee);
+		detailLieu = read(result, detailLieu);
+		return detailLieu;
+		
+	}
 	
 	/*
 	 * recupere pour le moment toute les donnees
 	 */
-	public List<SiteMesure> toutLesLieuMesures(SiteService lieuService){
-		List<Object[]> result = lieuService.lieuEtMesure();
+	public List<ReqDetailMesure> toutLesLieuMesures(MesureService mesureService,Integer annee){
+		System.out.println(annee);
+		List<Object[]> result = mesureService.rechercheParAnnee(annee);
 		detailLieu = read(result, detailLieu);
 		return detailLieu;
 	}
 	
-	List<SiteMesure> read(List<Object[]> object,List<SiteMesure> detailLieu) {
+	List<ReqDetailMesure> read(List<Object[]> object,List<ReqDetailMesure> detailLieu) {
 		
 		object.stream().forEach((record)->{
 			Long idSite = (Long)record[0];
@@ -61,13 +73,14 @@ public class ReadObjectTraitement {
 			double longitude = (Double) record[9];
 			float moyenneSpatiale = (float) record[10];
 			String nomRapport = (String) record[11];
-			Long idVille = (Long) record[15];
-			String province = (String) record[18];
-			String region = (String) record[19];
-			String ville = (String) record[20];
+			Long idLocalite = (Long) record[15];
+			String localite = (String) record[17];
+			String province = (String) record[19];
+			String region = (String) record[20];
 			
-			SiteMesure _detaillieu =  new SiteMesure(idSite, nomSite,
-					idVille, region,province, ville,
+			
+			ReqDetailMesure _detaillieu =  new ReqDetailMesure(idSite, nomSite,
+					idLocalite, region,province, localite,
 					idMesure, longitude, latitude,null,
 					dateMesure, moyenneSpatiale, null, null, null, nomRapport);
 			

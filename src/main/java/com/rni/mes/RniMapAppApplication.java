@@ -50,24 +50,26 @@ public class RniMapAppApplication {
     		PasswordEncoder passwordEncoder
     		){
         return args -> {
-        	
-        	Role role = new Role();
-        	role.setRoleName("ADMIN");
-        
-        	roleService.creerRole(role);
-        	
-        	Utilisateur utilisateur = new Utilisateur();
-        	utilisateur.setUsername("admin");
-        	utilisateur.setNom("administrateur");
-        	utilisateur.setPrenom("admininatreur");
-        	utilisateur.setPassword(passwordEncoder.encode("1234"));
-        	utilisateur.setEmail("irt.app@irt.com");
-        	utilisateur.setStatus(AccountStatus.ACTIVATED);
-        	utilisateur.setEmailVerifie(true);
-        	utilisateur.getRoles().add(role);
-        	
-        	utilisateurService.creerUtilisateur(utilisateur);
-        
+        	if(!roleService.trouveParRole("ADMIN").isPresent()) {
+        		Role role = new Role();
+            	role.setRoleName("ADMIN");
+            	roleService.creerRole(role);
+            	if(!utilisateurService.parUsername("admin").isPresent()) {
+
+                	Utilisateur utilisateur = new Utilisateur();
+                	utilisateur.setUsername("admin");
+                	utilisateur.setNom("administrateur");
+                	utilisateur.setPrenom("admininatreur");
+                	utilisateur.setPassword(passwordEncoder.encode("1234"));
+                	utilisateur.setEmail("irt.app@irt.com");
+                	utilisateur.setStatus(AccountStatus.ACTIVATED);
+                	utilisateur.setEmailVerifie(true);
+                	utilisateur.getRoles().add(role);
+                	
+                	utilisateurService.creerUtilisateur(utilisateur);
+            	}
+        	}
+
         };
     }
 

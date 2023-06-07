@@ -13,7 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.rni.mes.records.SiteMesure;
+import com.rni.mes.records.ReqDetailMesure;
 
 public class ExcelRead {
 
@@ -32,8 +32,8 @@ public class ExcelRead {
 
     }
     
-    public static List<SiteMesure> convertExcelToMap(InputStream is){
-    	List<SiteMesure> liste = new ArrayList<>();
+    public static List<ReqDetailMesure> convertExcelToMap(InputStream is){
+    	List<ReqDetailMesure> liste = new ArrayList<>();
     	try {
     		XSSFWorkbook workbook = new XSSFWorkbook(is);
 
@@ -53,7 +53,7 @@ public class ExcelRead {
                 int cid = 0;
                 
                 //attributs 
-                String region = null; String province = null; String ville = null; String nomSite = null; //String adresse;
+                String region = null; String province = null; String localite = null; String nomSite = null; //String adresse;
                 Double longitude = null; Double latitude = null; String prioritaire = null; Date dateMesure = null;
                 String largeBande = null; Float moyenneSpatiale = null; String bandeEtroite = null; String commentaire = null;
                 
@@ -75,7 +75,7 @@ public class ExcelRead {
 								province = cell.getStringCellValue();
 								break;
 							case 3:
-								ville = cell.getStringCellValue();
+								localite = cell.getStringCellValue();
 								break;
 							case 4:
 								nomSite = cell.getStringCellValue();
@@ -125,8 +125,8 @@ public class ExcelRead {
                 	cid++;
                 }
 	            @SuppressWarnings("null")
-				SiteMesure siteMesure = new SiteMesure(null, nomSite, null, region,
-					            		   province, ville, null, longitude, latitude,
+				ReqDetailMesure siteMesure = new ReqDetailMesure(null, nomSite, null, region,
+					            		   province, localite, null, longitude, latitude,
 					            		   prioritaire, dateMesure, moyenneSpatiale, largeBande, bandeEtroite,
 					            		   commentaire, null);
 	            liste.add(siteMesure);

@@ -34,6 +34,13 @@ public class MesureService {
 		return mesureRepository.parARPL(annee, region, province, localite);
 	}
 	
+	/*
+	 * recupere les donnees tournant autour d'une mesure
+	 */
+	public List<Object[]> rechercheParAnnee(Integer annee){
+		return mesureRepository.rechercheParAnnee(annee);
+	}
+	
 	//mise a jour d'un lieu de mesure
 	public void updateMesure(Long id, Mesure newDataMesure) {
 		
@@ -62,5 +69,19 @@ public class MesureService {
 		if(mesure!=null)
 			mesure.setNomRapport(nomRapport);
 		mesureRepository.save(mesure);
+	}
+	
+	/*
+	 * recuperer les annees des mesures, pour la recherche de l'annee la plus recente
+	 */
+	public List<Integer> anneesMesure(){
+		return mesureRepository.anneesMesure();
+	}
+	
+	/*
+	 * recupere le nombre de mesure pour une annee et par ville
+	 */
+	public Integer nbreMesure(String ville,Integer annee) {
+		return mesureRepository.nbreMesure(ville, annee);
 	}
 }

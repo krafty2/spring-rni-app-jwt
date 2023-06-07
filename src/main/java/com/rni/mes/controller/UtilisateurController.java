@@ -29,11 +29,14 @@ import com.rni.mes.enums.AccountStatus;
 
 import com.rni.mes.models.Role;
 import com.rni.mes.models.Utilisateur;
+import com.rni.mes.models.Localisation;
 import com.rni.mes.records.RegistrationRequestDTO;
 import com.rni.mes.service.MailService;
+import com.rni.mes.service.MesureService;
 import com.rni.mes.service.RoleService;
 import com.rni.mes.service.TokenService;
 import com.rni.mes.service.UtilisateurService;
+import com.rni.mes.service.LocalisationService;
 
 @RestController
 @RequestMapping("/public")

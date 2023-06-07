@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class FichierRni {
 
 	@Id @GeneratedValue(strategy = GenerationType.AUTO)
-	private Long idFichier;
+	private Long id;
 	private String nomFichier;
 	//represente la date de derniere modification du fichier recuperer directement sur ce dernier
 	private LocalDate dateDerniereModification;

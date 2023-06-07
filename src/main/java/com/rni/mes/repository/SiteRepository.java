@@ -23,18 +23,21 @@ public interface SiteRepository extends CrudRepository<Site, Long> {
 //			+ "on L.id=M.lieu_id\r\n"
 //			+ "where L.id = ?1",nativeQuery=true)
 	@Query(value = "select *\r\n"
-			+ "from site L\r\n"
-			+ "inner join mesure M on L.id_site=M.site_id_site\r\n"
-			+ "inner join ville V on L.ville_id_ville=V.id_ville\r\n"
+			+ "from site S\r\n"
+			+ "inner join mesure M on S.id_site=M.site_id_site\r\n"
+			+ "inner join localisation L on S.ville_id_ville=L.id_ville\r\n"
 			+ "where L.id_site = ?1",nativeQuery = true)
 	List<Object[]> details(Long id);
 	
-	//recherche tout les lieux et mesure
-	@Query(value = "select * from site S\r\n"
-			+ "inner join mesure M on S.id_site=M.site_id_site\r\n"
-			+ "inner join ville V on S.ville_id_ville=V.id_ville\r\n"
-			+ "order by S.nom_site",nativeQuery = true)
-	List<Object[]> recherchePlus();
+	/*
+	 * envoie le nombre de site par ville
+	 */
+	@Query(value="select count(*) as nbreSite\r\n"
+			+ "from site S\r\n"
+			+ "inner join localisation L\r\n"
+			+ "on S.ville_id_ville=L.id_ville\r\n"
+			+ "where L.ville=?1",nativeQuery = true)
+	Integer nbreDeSite(String ville);
 
 
 }

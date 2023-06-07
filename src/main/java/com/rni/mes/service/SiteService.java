@@ -42,11 +42,6 @@ public class SiteService {
 		return siteRepository.findById(id);
 	}
 	
-	//recherche tout les lieux ainsi que les mesures
-		public List<Object[]> lieuEtMesure(){
-			return siteRepository.recherchePlus();
-		}
-	
 	/*
 	 * recherche d'un lieu par son nom
 	 */
@@ -72,5 +67,12 @@ public class SiteService {
 	
 			siteRepository.save(site);
 		}
+	}
+	
+	/*
+	 * recherche du nombre de site par ville
+	 */
+	public Integer nbrDeSite(String ville) {
+		return siteRepository.nbreDeSite(ville);
 	}
 }
