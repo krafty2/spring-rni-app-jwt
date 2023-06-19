@@ -3,6 +3,7 @@ package com.rni.mes.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +13,8 @@ import com.rni.mes.repository.SiteRepository;
 @Service
 public class SiteService {
 
+	@Autowired
 	private SiteRepository siteRepository;
-
-	public SiteService(SiteRepository siteRepository) {
-		super();
-		this.siteRepository = siteRepository;
-	}
 
 	/*
 	 * enregistre d'un lieu
@@ -30,9 +27,17 @@ public class SiteService {
 	 * affiche tout les lieux enregistrer
 	 */
 	
-	public List<Site> tousLesLieux(){
+	public List<Site> tous_les_lieux(){
 		Sort sort = Sort.by("nomSite").ascending();
 		return siteRepository.findAll(sort);
+	}
+	
+	/*
+	 * detail des sites
+	 */
+	
+	public List<Object[]> details_Site(){
+		return siteRepository.detailSite();
 	}
 	
 	/*

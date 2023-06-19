@@ -166,7 +166,10 @@ public class FichierController {
 	 */
 	
 	@PostMapping("/transfertPdf")
-	public String fileUpload(@RequestParam("file") MultipartFile file,@RequestParam("id") String id) {
+	public ResponseEntity<?> fileUpload(
+			@RequestParam("file") MultipartFile file,@RequestParam("id") String id
+			) throws Exception
+	{
 		String uploadDir = "/test";
 		System.out.println(id + "ok cool");
 		File directoryFile = new File(uploadDir);
@@ -180,7 +183,7 @@ public class FichierController {
 			file.transferTo(newFile);
 			Long idMe = Long.parseLong(id);
 			mesureService.ajoutRapport(idMe, file.getOriginalFilename());
-			return "succes";
+			return ResponseEntity.ok(Map.of("message", "File is uploaded and data is saved to db "));
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -189,7 +192,7 @@ public class FichierController {
 			e.printStackTrace();
 		}
 		
-		return "echec";
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload Excel file");
 	}
 	
 	

@@ -1,27 +1,26 @@
 package com.rni.mes.treatment;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.rni.mes.records.ReqDetailMesure;
+import com.rni.mes.records.ReqDetailSite;
 import com.rni.mes.service.MesureService;
 import com.rni.mes.service.SiteService;
 
 public class ReadObjectTraitement {
 
-	List<ReqDetailMesure> detailLieu = new ArrayList<>();
+	List<ReqDetailMesure> detailsMesures = new ArrayList<>();
+	List<ReqDetailSite> detailsSites = new ArrayList<>();
 
 	/*
 	 * traitement en fonction de l'identifiant d'un lieu
 	 */
 	public List<ReqDetailMesure> avecId(SiteService siteService, Long id) {
 		List<Object[]> result = siteService.detailsSite(id);
-		
-		detailLieu = read(result, detailLieu);
-		
-		return detailLieu;
+		detailsMesures = read(result);
+		return detailsMesures;
 	}
 	
 	/*
@@ -34,9 +33,9 @@ public class ReadObjectTraitement {
 			){
 		List<Object[]> result = mesureService.rechercheARPL(annee, regionC, provinceC, localiteC);
 		
-		detailLieu = read(result, detailLieu);
+		detailsMesures = read(result);
 		
-		return detailLieu;
+		return detailsMesures;
 		
 	}
 	
@@ -47,8 +46,8 @@ public class ReadObjectTraitement {
 			Integer annee,MesureService mesureService
 			){
 		List<Object[]> result = mesureService.rechercheParAnnee(annee);
-		detailLieu = read(result, detailLieu);
-		return detailLieu;
+		detailsMesures = read(result);
+		return detailsMesures;
 		
 	}
 	
@@ -56,13 +55,15 @@ public class ReadObjectTraitement {
 	 * recupere pour le moment toute les donnees
 	 */
 	public List<ReqDetailMesure> toutLesLieuMesures(MesureService mesureService,Integer annee){
-		System.out.println(annee);
+		
 		List<Object[]> result = mesureService.rechercheParAnnee(annee);
-		detailLieu = read(result, detailLieu);
-		return detailLieu;
+		detailsMesures = read(result);
+		return detailsMesures;
 	}
 	
-	List<ReqDetailMesure> read(List<Object[]> object,List<ReqDetailMesure> detailLieu) {
+	List<ReqDetailMesure> read(List<Object[]> object) {
+		
+		List<ReqDetailMesure> detailLieu = new ArrayList<>();
 		
 		object.stream().forEach((record)->{
 			Long idSite = (Long)record[0];
@@ -88,5 +89,29 @@ public class ReadObjectTraitement {
 		});
 		
 		return detailLieu;	
+	}
+	
+	//----------------------------------------------------------------detail site
+	
+	public List<ReqDetailSite> read2(List<Object[]> object){
+		List<ReqDetailSite> sites= new ArrayList<>();
+		object.stream().forEach((record)->{
+			Long idSite = (Long)record[0];
+			String nomSite = (String)record[1];
+			String region = (String)record[2];
+			String province = (String)record[3];
+			String localite = (String)record[4];
+			
+			ReqDetailSite _site = new ReqDetailSite(idSite, nomSite, region, province, localite);
+			
+			sites.add(_site);
+		});
+		return sites;	
+	}
+	
+	public List<ReqDetailSite> reqDetailSite(SiteService siteService){
+		List<Object[]> result = siteService.details_Site();
+		detailsSites = read2(result);
+		return detailsSites;
 	}
 }

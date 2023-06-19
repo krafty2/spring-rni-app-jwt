@@ -84,4 +84,8 @@ public class MesureService {
 	public Integer nbreMesure(String ville,Integer annee) {
 		return mesureRepository.nbreMesure(ville, annee);
 	}
+	
+	public Integer delAllMesureFromFile(Long idFile) {
+		return mesureRepository.deleteMesure(idFile);
+	}
 }

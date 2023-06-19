@@ -40,7 +40,7 @@ public interface MesureRepository extends CrudRepository<Mesure, Long> {
 	List<Integer> anneesMesure();
 	
 	/*
-	 * compte le nombre de mesure par ville et prend l'annee la plus recente
+	 * compte le nombre de mesure par localite et prend l'annee la plus recente
 	 */
 	@Query(value = "select count(*) as nbreMesure\r\n"
 			+ "from mesure M\r\n"
@@ -49,4 +49,11 @@ public interface MesureRepository extends CrudRepository<Mesure, Long> {
 			+ "where L.localite=?1 \r\n"
 			+ "and extract(year from M.date_mesure)=?2",nativeQuery = true)
 	Integer nbreMesure( String localite ,Integer Annee);
+	
+//	@Query(value="delete from mesure M using fichier_rni F\r\n"
+//			+ "where M.fichier_rni_id=?1",nativeQuery = true)
+	@Query(value="with deleted as ( delete from mesure M using fichier_rni F\r\n"
+			+ "where M.fichier_rni_id= ?1 returning M.fichier_rni_id) select\r\n"
+			+ "count(*) as nb from deleted",nativeQuery = true)
+	Integer deleteMesure(Long id);
 }
