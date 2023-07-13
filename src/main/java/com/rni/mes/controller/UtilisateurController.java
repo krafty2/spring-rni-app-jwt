@@ -36,6 +36,9 @@ import com.rni.mes.service.MesureService;
 import com.rni.mes.service.RoleService;
 import com.rni.mes.service.TokenService;
 import com.rni.mes.service.UtilisateurService;
+
+import jakarta.mail.MessagingException;
+
 import com.rni.mes.service.LocalisationService;
 
 @RestController
@@ -99,7 +102,7 @@ public class UtilisateurController {
 	
 
 	@PostMapping("/register")
-	public Utilisateur creationCompte(@RequestBody RegistrationRequestDTO  registrationRequestDTO){
+	public Utilisateur creationCompte(@RequestBody RegistrationRequestDTO  registrationRequestDTO) throws MessagingException{
 		System.out.println("hello");
 		if(!registrationRequestDTO.password().equals(registrationRequestDTO.confirmPassword()))
             throw new RuntimeException("Passwords not match");
@@ -139,8 +142,47 @@ public class UtilisateurController {
                 .claim("email",utilisateur.getEmail())
                 .build();
 		String activationJwtToken=jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
+		String htmlContent = "<html><body><p>Contenu du message</p> <a href=\"http://localhost:8080/public/emailActivation?token="+activationJwtToken +" \">valider</a></body></html>";
 		String emailContent=String.format("Pour activer votre compte clickez sur ce lien : http://localhost:8080/public/emailActivation?token="+activationJwtToken);
-        mailservice.sendEmail(utilisateur.getEmail(),"Email verification",emailContent);
+		String emailContentHtml = "<html lang=\"en\">\r\n"
+				+ "\r\n"
+				+ "<body>\r\n"
+				+ "    <section style=\"width: 700px;margin: auto;padding: 14px; font-family: sans-serif;text-align: center; background: #264653; box-shadow: 1px 2px 6px rgb(241, 238, 238);border-radius: 4px;\">\r\n"
+				+ "\r\n"
+				+ "        \r\n"
+				+ "            <div style=\"margin: 0 0 26px 0; border-bottom: 2px solid white; padding: 10px;\">\r\n"
+				+ "                <h1 style=\"color: #00bbf9;font-size: 30px;font-weight: 600;padding: 4px;margin: 0;\">\r\n"
+				+ "                    IRT CONSULTING\r\n"
+				+ "                </h1>\r\n"
+				+ "                <small style=\"color: #00bbf9;\">Intégrateur de solution</small>\r\n"
+				+ "            </div>\r\n"
+				+ "\r\n"
+				+ "            <div style=\"margin: 8px 0 16px 0; border-bottom: 2px solid white; padding: 4px;\">\r\n"
+				+ "                <svg fill=\"white\" height=\"38\" viewBox=\"0 -960 960 960\" width=\"38\">\r\n"
+				+ "                    <path\r\n"
+				+ "                        d=\"M140-160q-24 0-42-18t-18-42v-520q0-24 18-42t42-18h680q24 0 42 18t18 42v520q0 24-18 42t-42 18H140Zm340-302L140-685v465h680v-465L480-462Zm0-60 336-218H145l335 218ZM140-685v-55 520-465Z\" />\r\n"
+				+ "                </svg>\r\n"
+				+ "                <p style=\"font-size: 22px;margin: 0 0 24px 0;color: white;\">Verifier l'adresse courriel</p>\r\n"
+				+ "            </div>\r\n"
+				+ "            <div style=\"margin: 18px 0;background: #F0F8FF;padding: 14px;border-radius: 4px;\">\r\n"
+				+ "                <p style=\"font-size: 14px;font-weight: normal;color: black;\">\r\n"
+				+ "                    Vous avez demandé à vous inscrire à IRT-CONSULTING avec cette adresse de courriel.\r\n"
+				+ "                    Une fois que vous aurez confirmé cette adresse, votre demande d'inscription sera validé.\r\n"
+				+ "                    Vous ne pourrez pas vous connecter d’ici-là. Si votre demande est refusée,\r\n"
+				+ "                    vos données seront supprimées du serveur, aucune action supplémentaire de votre part n’est donc\r\n"
+				+ "                    requise.\r\n"
+				+ "                    Si vous n’êtes pas à l’origine de cette demande, veuillez ignorer ce message.\r\n"
+				+ "                </p>\r\n"
+				+ "            </div>\r\n"
+				+ "            <div style=\"margin: 10px 0;border-bottom: 2px solid white; padding: 24px;\">\r\n"
+				+ "                <a style=\"background: #00bbf9;padding: 8px;text-decoration: none; color: white;border-radius: 4px; box-shadow: 2px 3px 4px rgb(32, 31, 31);\" href=\"http://localhost:8080/public/emailActivation?token="+activationJwtToken+"\">Vérifier l'adresse courriel</a>\r\n"
+				+ "            </div>\r\n"
+				+ "       \r\n"
+				+ "    </section>\r\n"
+				+ "</body>\r\n"
+				+ "\r\n"
+				+ "</html>";
+        mailservice.sendEmail(utilisateur.getEmail(),"Email verification",emailContentHtml);
 		
     	return utilisateur;
     }

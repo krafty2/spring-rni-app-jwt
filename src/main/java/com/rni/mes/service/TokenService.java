@@ -52,7 +52,7 @@ public class TokenService {
 				.subject(appUser.getUsername())
                 .issuer("auth-service")
                 .issuedAt(instant)
-                .expiresAt(instant.plus(withRefreshToken?5:30, ChronoUnit.MINUTES))
+                .expiresAt(instant.plus(withRefreshToken?45:30, ChronoUnit.MINUTES))
                 .claim("scope",scope)
                 .claim("email",appUser.getEmail())
                 .claim("nom", appUser.getNom())
